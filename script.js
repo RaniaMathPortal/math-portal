@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-function loadLessonData() {
+async function loadLessonData() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedGrade = urlParams.get('grade');
     const clickedLessonName = urlParams.get('lessonName');
@@ -212,30 +212,43 @@ function loadLessonData() {
                 document.getElementById("adminCurrentLessonName").textContent = finalHeadingText;
             }
             
-            const storageKey = `customVid_${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`;
-            const currentData = localStorage.getItem(storageKey);
-            if (currentData) {
-                const parsed = JSON.parse(currentData);
-                if (parsed.sessionVideo && document.getElementById('sessionUrlInput') && parsed.sessionVideo.includes('youtube')) {
-                    document.getElementById('sessionUrlInput').value = parsed.sessionVideo;
+            // --- NEW: Load saved data from Firestore into the input boxes ---
+            try {
+                const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+                const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.sessionVideo && document.getElementById('sessionUrlInput')) {
+                        document.getElementById('sessionUrlInput').value = data.sessionVideo;
+                    }
+                    if (data.homeworkVideo && document.getElementById('homeworkUrlInput')) {
+                        document.getElementById('homeworkUrlInput').value = data.homeworkVideo;
+                    }
                 }
-                if (parsed.homeworkVideo && document.getElementById('homeworkUrlInput') && parsed.homeworkVideo.includes('youtube')) {
-                    document.getElementById('homeworkUrlInput').value = parsed.homeworkVideo;
-                }
+            } catch (error) {
+                console.error("Error loading teacher data:", error);
             }
         }
     }
 
-    const storageKey = `customVid_${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`;
-    const customLessonData = localStorage.getItem(storageKey);
-    
+    // --- NEW: Load video URLs from Firestore for everyone ---
     let activeVideo = gradeData.videoUrl || "";
     let activeHomework = gradeData.homeworkVideoUrl || "";
 
-    if (customLessonData) {
-        const parsed = JSON.parse(customLessonData);
-        if (parsed.sessionVideo) activeVideo = parsed.sessionVideo;
-        if (parsed.homeworkVideo) activeHomework = parsed.homeworkVideo;
+    try {
+        const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+        const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.sessionVideo) activeVideo = data.sessionVideo;
+            if (data.homeworkVideo) activeHomework = data.homeworkVideo;
+        }
+    } catch (error) {
+        console.error("Error loading video data:", error);
     }
 
     function loadVideoIntoIframe(url, iframeId) {
@@ -277,9 +290,9 @@ function loadLessonData() {
 }
 
 // ==========================================================================
-// 4. Save Logic (Processes YouTube Links)
+// 4. Save Logic (Processes YouTube Links and saves to Firestore)
 // ==========================================================================
-function saveTeacherLinks() {
+async function saveTeacherLinks() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedGrade = urlParams.get('grade');
     const clickedLessonName = urlParams.get('lessonName');
@@ -291,7 +304,6 @@ function saveTeacherLinks() {
     }
 
     const finalHeadingText = clickedLessonName ? clickedLessonName : gradeData.lessonTitle;
-    const storageKey = `customVid_${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`;
 
     const sessionInputEl = document.getElementById('sessionUrlInput');
     const homeworkInputEl = document.getElementById('homeworkUrlInput');
@@ -326,9 +338,19 @@ function saveTeacherLinks() {
         dataObj.homeworkVideo = cleanYoutubeUrl(inputHomework);
     }
 
-    localStorage.setItem(storageKey, JSON.stringify(dataObj));
-    alert("🚀 Links processed successfully! Refreshing portal view...");
-    window.location.reload();
+    // --- NEW: Save data to Firestore ---
+    try {
+        const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+        const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
+        
+        await setDoc(docRef, dataObj, { merge: true });
+
+        alert("🚀 Links saved to the cloud! Refreshing portal view...");
+        window.location.reload();
+    } catch (error) {
+        console.error("Error saving to Firestore:", error);
+        alert("❌ Failed to save links to the cloud. Please check your internet connection and try again.");
+    }
 }
 
 function toggleTeacherMode(status) {
@@ -356,16 +378,10 @@ function clearLessonCache() {
         return;
     }
 
-    const finalHeadingText = clickedLessonName ? clickedLessonName : gradeData.lessonTitle;
-    const storageKey = `customVid_${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`;
-
-    localStorage.removeItem(storageKey);
+    alert("🗑️ This button currently only clears the local browser cache. To remove a video permanently, please contact your developer.");
 
     if (document.getElementById('sessionUrlInput')) document.getElementById('sessionUrlInput').value = "";
     if (document.getElementById('homeworkUrlInput')) document.getElementById('homeworkUrlInput').value = "";
-
-    alert("🗑️ Page memory wiped out completely! Refreshing...");
-    window.location.reload();
 }
 
 // ==========================================================================
@@ -380,7 +396,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!gate) return;
 
-    // CHANGED: Using sessionStorage instead of localStorage
     if (sessionStorage.getItem("mathPortalAuth") === "true") {
         gate.style.display = "none";
         document.body.classList.remove("locked");
@@ -398,7 +413,6 @@ function checkPassword() {
     const enteredPassword = passwordInput.value;
 
     if (enteredPassword === MASTER_PASSWORD) {
-        // CHANGED: Using sessionStorage instead of localStorage
         sessionStorage.setItem("mathPortalAuth", "true");
         
         gate.style.display = "none";
@@ -429,7 +443,6 @@ document.addEventListener("contextmenu", function(e) {
 // ==========================================================================
 function logoutStudent() {
     if (confirm("Are you sure you want to log out?")) {
-        // CHANGED: Using sessionStorage
         sessionStorage.removeItem("mathPortalAuth");
         sessionStorage.removeItem("teacherAuth");
         window.location.reload();
