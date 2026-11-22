@@ -365,9 +365,9 @@ function toggleTeacherMode(status) {
 }
 
 // ==========================================================================
-// 5. Cache Buster Utility
+// 5. Cache Buster Utility (Deletes videos from Firestore)
 // ==========================================================================
-function clearLessonCache() {
+async function clearLessonCache() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedGrade = urlParams.get('grade');
     const clickedLessonName = urlParams.get('lessonName');
@@ -378,10 +378,24 @@ function clearLessonCache() {
         return;
     }
 
-    alert("🗑️ This button currently only clears the local browser cache. To remove a video permanently, please contact your developer.");
+    const confirmDelete = confirm("Are you sure you want to REMOVE these video links? This will delete them for all students.");
+    if (!confirmDelete) return;
 
-    if (document.getElementById('sessionUrlInput')) document.getElementById('sessionUrlInput').value = "";
-    if (document.getElementById('homeworkUrlInput')) document.getElementById('homeworkUrlInput').value = "";
+    const finalHeadingText = clickedLessonName ? clickedLessonName : gradeData.lessonTitle;
+    
+    try {
+        const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+        const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
+        
+        // Overwrite the data with empty strings to delete the videos
+        await setDoc(docRef, { sessionVideo: "", homeworkVideo: "" }, { merge: true });
+
+        alert("🗑️ Video links removed from the cloud successfully!");
+        window.location.reload();
+    } catch (error) {
+        console.error("Error deleting from Firestore:", error);
+        alert("❌ Failed to delete links. Please check your internet connection.");
+    }
 }
 
 // ==========================================================================
