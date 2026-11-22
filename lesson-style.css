@@ -61,14 +61,14 @@ body.locked {
 }
 
 /* ==========================================================================
-   Responsive Two-Column Split Layout
+   Responsive Layout (Now Single Column)
    ========================================================================== */
 .portal-container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 2.5rem auto;
     padding: 0 1.5rem;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr; /* Changed to 1fr to fill the screen */
     gap: 2.5rem;
 }
 
@@ -113,7 +113,6 @@ body.locked {
     border: 1px solid var(--border-color);
 }
 
-/* FIXED: Handles both iframe (YouTube) and video (Local PC) */
 .video-wrapper iframe, 
 .video-wrapper video {
     position: absolute;
@@ -124,198 +123,13 @@ body.locked {
     border: 0;
 }
 
-/* Materials Download Card */
-.download-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-}
-
-.file-info {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-}
-
-.file-icon {
-    font-size: 2rem;
-}
-
-.file-info h3 {
-    font-size: 1.05rem;
-    font-weight: 600;
-}
-
-.file-info p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.download-btn {
-    background-color: var(--accent-primary);
-    color: #ffffff;
-    text-decoration: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-}
-
-.download-btn:hover {
-    background-color: #2563eb;
-}
-
-/* ==========================================================================
-   Sidebar Column (Form Submissions)
-   ========================================================================== */
-.submission-sidebar {
-    position: sticky;
-    top: 2rem;
-    height: fit-content;
-}
-
-.submission-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 2rem;
-}
-
-.submission-card h2 {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.submission-card p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-}
-
-.upload-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.input-group label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-}
-
-.input-group input {
-    background-color: var(--bg-main);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 0.85rem;
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 0.95rem;
-    outline: none;
-}
-
-.input-group input:focus {
-    border-color: var(--accent-primary);
-}
-
-/* Interactive Dropzone Box */
-.file-drop-zone {
-    border: 2px dashed var(--border-color);
-    border-radius: 12px;
-    padding: 2rem 1rem;
-    text-align: center;
-    cursor: pointer;
-    background-color: rgba(11, 15, 25, 0.4);
-    transition: border-color 0.2s, background-color 0.2s;
-}
-
-.file-drop-zone:hover {
-    border-color: var(--accent-primary);
-    background-color: rgba(59, 130, 246, 0.03);
-}
-
-.upload-cloud {
-    font-size: 1.75rem;
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.drop-text {
-    font-size: 0.9rem;
-    color: var(--text-primary);
-}
-
-.drop-text span {
-    color: var(--accent-primary);
-    font-weight: 600;
-}
-
-.file-limits {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-top: 0.25rem;
-}
-
-.file-display {
-    display: none;
-    background-color: rgba(16, 185, 129, 0.1);
-    border: 1px solid var(--success-green);
-    color: #ffffff;
-    font-size: 0.85rem;
-    padding: 0.75rem;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.submit-btn {
-    background-color: var(--accent-primary);
-    color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    padding: 1rem;
-    font-family: inherit;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-}
-
-.submit-btn:hover {
-    background-color: #2563eb;
-}
-
-.submit-btn:active {
-    transform: scale(0.98);
-}
-
 /* ==========================================================================
    Viewport Queries (Collapsing Layout)
    ========================================================================== */
 @media (max-width: 968px) {
     .portal-container {
-        grid-template-columns: 1fr;
         margin: 1.5rem auto;
         gap: 2rem;
-    }
-    
-    .submission-sidebar {
-        position: static;
     }
 }
 
