@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Sessions Log | Mrs. Rania Abdelmeneim</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .zoom-banner {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
+            border: 1px dashed #f59e0b; border-radius: 16px; padding: 1.5rem 2rem; margin-bottom: 3rem;
+            display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; text-align: left; width: 100%;
+        }
+        .zoom-info { display: flex; align-items: center; gap: 1.25rem; }
+        .zoom-icon-box { font-size: 2.2rem; }
+        .zoom-text h2 { font-size: 1.25rem; font-weight: 600; color: #ffffff; display: flex; align-items: center; gap: 0.5rem; }
+        .live-dot { width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; display: inline-block; animation: pulseGlow 1.5s infinite; }
+        @keyframes pulseGlow {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .zoom-text p { color: #94a3b8; font-size: 0.9rem; margin-top: 0.25rem; }
+        .zoom-btn { background-color: #f59e0b; color: #0b0f19; text-decoration: none; padding: 0.85rem 1.5rem; border-radius: 10px; font-size: 0.95rem; font-weight: 600; transition: background-color 0.2s; white-space: nowrap; }
+        .zoom-btn:hover { background-color: #d97706; color: #ffffff; }
+        .navbar { width: 100%; background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; z-index: 100; }
+        .back-btn { color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+        .back-btn:hover { color: var(--accent-primary); }
+        .nav-title { font-weight: 600; font-size: 1.1rem; color: #ffffff; }
+        .portal-container { margin-top: 6rem; width: 100%; }
+        .archive-lesson-links { list-style: none; width: 100%; margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; text-align: left; }
+        .archive-lesson-links li a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
+        .archive-lesson-links li a:hover { color: var(--accent-primary); }
+        
+        .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+        .logout-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.85rem; transition: all 0.2s; }
+        .logout-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+        @media (max-width: 768px) {
+            .zoom-banner { flex-direction: column; align-items: flex-start; padding: 1.5rem; }
+            .zoom-btn { width: 100%; text-align: center; }
+            .navbar { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PASSWORD GATE OVERLAY -->
+    <div id="passwordGate" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center;">
+        <div style="background: var(--bg-card); padding: 3rem 2rem; border-radius: 20px; border: 1px solid var(--border-color); max-width: 400px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2 style="color: white; margin-bottom: 0.5rem;">Private Portal</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">Enter the class password to access the lessons.</p>
+            
+            <form id="loginForm" onsubmit="event.preventDefault(); checkPassword();">
+                <input type="text" id="usernameInput" name="username" value="student" style="display: none;" autocomplete="username">
+                <input type="password" id="passwordInput" name="password" placeholder="Enter password" autocomplete="current-password" style="width: 100%; padding: 1rem; background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; margin-bottom: 1rem; text-align: center;">
+                <button type="submit" style="width: 100%; padding: 1rem; background: var(--accent-primary); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">Unlock Portal</button>
+            </form>
+            
+            <p id="passwordError" style="color: #ef4444; margin-top: 1rem; font-size: 0.85rem; display: none;">Incorrect password. Try again.</p>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <a href="index.html" class="back-btn">← Back to Dashboard</a>
+        <div class="nav-right">
+            <div class="nav-title" id="archiveGradeHeader">Loading Class Archive...</div>
+            <button onclick="logoutStudent()" class="logout-btn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container portal-container">
+        <header class="lesson-header">
+            <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">Recorded Classes & Syllabus</h1>
+            <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2.5rem;">Select your active unit below to view recorded video sessions and access homework worksheets.</p>
+        </header>
+
+        <div class="zoom-banner">
+            <div class="zoom-info">
+                <div class="zoom-icon-box">🎥</div>
+                <div class="zoom-text">
+                    <h2>Join Live Zoom Meeting <span class="live-dot"></span></h2>
+                    <p><strong>All Grades Shared Classroom:</strong> Click the button to launch Zoom and enter Mrs. Rania's active online live lecture room immediately.</p>
+                </div>
+            </div>
+            <a href="https://us04web.zoom.us/j/8659901016?pwd=TitjWE5oTE11YnJZd3hGN0FGQ01ZZz09" target="_blank" class="zoom-btn">Join Zoom Class</a>
+        </div>
+
+        <main class="grid-container" id="archiveGridContainer"></main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedGrade = urlParams.get('grade');
+            const gradeData = mathDatabase[selectedGrade];
+
+            if (!gradeData) {
+                document.getElementById("archiveGradeHeader").textContent = "Archive Not Found";
+                document.getElementById("archiveGridContainer").innerHTML = "<h3 style='color: white; grid-column: 1/-1;'>Invalid grade selection.</h3>";
+                return;
+            }
+
+            document.getElementById("archiveGradeHeader").textContent = `Mrs. Rania's Portal • ${gradeData.gradeTitle}`;
+            const gridContainer = document.getElementById("archiveGridContainer");
+            let archiveHTML = "";
+
+            if (gradeData.hasIndex && gradeData.units) {
+                gradeData.units.forEach((unit, unitIdx) => {
+                    let lessonsListHTML = "";
+                    unit.lessons.forEach((lesson) => {
+                        const encodedLesson = encodeURIComponent(lesson);
+                        const encodedUnitName = encodeURIComponent(unit.name);
+                        lessonsListHTML += `<li><a href="lessons.html?grade=${selectedGrade}&lessonName=${encodedLesson}&unitName=${encodedUnitName}"><span style="color: var(--accent-primary);">▪</span> ${lesson}</a></li>`;
+                    });
+
+                    archiveHTML += `
+                        <div class="grade-card" style="cursor: default; align-items: flex-start; padding: 2.5rem 2rem;">
+                            <div class="card-icon">U${unitIdx + 1}</div>
+                            <h2 style="text-align: left; margin-bottom: 0.25rem;">Unit ${unitIdx + 1}</h2>
+                            <p style="text-align: left; color: #a1a1aa; font-size: 0.9rem; font-weight: 500; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; width: 100%;">
+                                ${unit.name.replace(/Unit \d+:\s*/, '')}
+                            </p>
+                            <ul class="archive-lesson-links">${lessonsListHTML}</ul>
+                        </div>`;
+                });
+            } else {
+                for (let i = 1; i <= 2; i++) {
+                    archiveHTML += `
+                        <div class="grade-card" style="align-items: flex-start; padding: 2.5rem 2rem;">
+                            <div class="card-icon">U${i}</div>
+                            <h2 style="margin-bottom: 0.5rem; text-align: left;">Unit ${i}: Core Mathematics</h2>
+                            <p style="color: #a1a1aa; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; width: 100%; text-align: left;">General Topics Profile</p>
+                            <ul class="archive-lesson-links">
+                                <li><a href="lessons.html?grade=${selectedGrade}&lessonName=Active%20Lecture"><span style="color: var(--accent-primary);">▪</span> Session #01 - Active Lecture</a></li>
+                                <li><a href="lessons.html?grade=${selectedGrade}&lessonName=Revision%20Lab"><span style="color: var(--accent-primary);">▪</span> Session #02 - Revision Lab</a></li>
+                            </ul>
+                        </div>`;
+                }
+            }
+            gridContainer.innerHTML = archiveHTML;
+        });
+    </script>
+</body>
+</html>

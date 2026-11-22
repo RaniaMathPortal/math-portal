@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mrs. Rania Abdelmeneim | Math Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- PASSWORD GATE OVERLAY -->
+    <div id="passwordGate" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center;">
+        <div style="background: var(--bg-card); padding: 3rem 2rem; border-radius: 20px; border: 1px solid var(--border-color); max-width: 400px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2 style="color: white; margin-bottom: 0.5rem;">Private Portal</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">Enter the class password to access the lessons.</p>
+            
+            <form id="loginForm" onsubmit="event.preventDefault(); checkPassword();">
+                <input type="text" id="usernameInput" name="username" value="student" style="display: none;" autocomplete="username">
+                <input type="password" id="passwordInput" name="password" placeholder="Enter password" autocomplete="current-password" style="width: 100%; padding: 1rem; background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; margin-bottom: 1rem; text-align: center;">
+                <button type="submit" style="width: 100%; padding: 1rem; background: var(--accent-primary); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">Unlock Portal</button>
+            </form>
+            
+            <p id="passwordError" style="color: #ef4444; margin-top: 1rem; font-size: 0.85rem; display: none;">Incorrect password. Try again.</p>
+        </div>
+    </div>
+
+    <div class="dashboard-container" style="position: relative;">
+        
+        <!-- LOGOUT BUTTON -->
+        <button onclick="logoutStudent()" style="position: absolute; top: 0; right: 0; background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.85rem; transition: all 0.2s;" onmouseover="this.style.borderColor='#ef4444'; this.style.color='#ef4444';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-secondary)';">Logout</button>
+
+        <header>
+            <h1>Mrs. <span>Rania Abdelmeneim</span></h1>
+            <p>Mathematics Portal • Select Your Grade to Begin</p>
+        </header>
+
+        <main class="grid-container">
+            <div class="grade-card" onclick="selectGrade(5)">
+                <div class="card-icon">G5</div>
+                <h2>Grade 5</h2>
+                <p>Sessions, Homework & Materials</p>
+            </div>
+            <div class="grade-card" onclick="selectGrade(6)">
+                <div class="card-icon">G6</div>
+                <h2>Grade 6</h2>
+                <p>Sessions, Homework & Materials</p>
+            </div>
+            <div class="grade-card" onclick="selectGrade(7)">
+                <div class="card-icon">G7</div>
+                <h2>Grade 7</h2>
+                <p>Sessions, Homework & Materials</p>
+            </div>
+            <div class="grade-card" onclick="selectGrade(8)">
+                <div class="card-icon">G8</div>
+                <h2>Grade 8</h2>
+                <p>Sessions, Homework & Materials</p>
+            </div>
+            <div class="grade-card" onclick="selectGrade(9)">
+                <div class="card-icon">G9</div>
+                <h2>Grade 9</h2>
+                <p>Sessions, Homework & Materials</p>
+            </div>
+            <div class="grade-card" onclick="selectGrade(10)">
+                <div class="card-icon">G10</div>
+                <h2>Grade 10</h2>
+                <p>Sessions, Homework & Materials</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
