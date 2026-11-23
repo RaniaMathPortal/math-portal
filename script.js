@@ -163,6 +163,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+function cleanYoutubeUrl(url) {
+    if (!url) return "";
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    if (match && match[2].length === 11) {
+        return `https://www.youtube.com/embed/${match[2]}?rel=0&modestbranding=1`;
+    }
+    const rawIdCheck = url.replace(/[^a-zA-Z0-9_-]/g, "");
+    if (rawIdCheck.length === 11) {
+        return `https://www.youtube.com/embed/${rawIdCheck}?rel=0&modestbranding=1`;
+    }
+    return url;
+}
+
+function renderParts(videos, containerId, iframeId) {
+    const container = document.getElementById(containerId);
+    const iframe = document.getElementById(iframeId);
+    container.innerHTML = '';
+
+    if (!videos || videos.length === 0) {
+        iframe.src = "";
+        return;
+    }
+
+    videos.forEach((vid, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = `Part ${index + 1}`;
+        btn.className = index === 0 ? 'part-btn active' : 'part-btn';
+        btn.onclick = () => {
+            iframe.src = vid;
+            document.querySelectorAll(`#${containerId} .part-btn`).forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        };
+        container.appendChild(btn);
+    });
+
+    iframe.src = videos[0];
+}
+
 async function loadLessonData() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedGrade = urlParams.get('grade');
@@ -181,24 +220,36 @@ async function loadLessonData() {
 
     document.title = `${finalHeadingText} | Mrs. Rania Abdelmeneim`;
 
-    if (document.getElementById("lessonPageTitle")) {
-        document.getElementById("lessonPageTitle").textContent = finalHeadingText;
-    }
-    if (document.getElementById("gradeMeta")) {
-        document.getElementById("gradeMeta").textContent = `${gradeData.gradeTitle} • ${finalUnitText}`;
+    if (document.getElementById("lessonPageTitle")) document.getElementById("lessonPageTitle").textContent = finalHeadingText;
+    if (document.getElementById("gradeMeta")) document.getElementById("gradeMeta").textContent = `${gradeData.gradeTitle} • ${finalUnitText}`;
+
+    let activeSessionVideos = [];
+    let activeHomeworkVideos = [];
+
+    try {
+        const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+        const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (typeof data.sessionVideo === 'string' && data.sessionVideo !== "") activeSessionVideos = [data.sessionVideo];
+            else if (Array.isArray(data.sessionVideos)) activeSessionVideos = data.sessionVideos;
+
+            if (typeof data.homeworkVideo === 'string' && data.homeworkVideo !== "") activeHomeworkVideos = [data.homeworkVideo];
+            else if (Array.isArray(data.homeworkVideos)) activeHomeworkVideos = data.homeworkVideos;
+        }
+    } catch (error) {
+        console.error("Error loading video data:", error);
     }
 
-    // SECURE Teacher Mode Display Engine
     if (isTeacher) {
         const isTeacherAuth = sessionStorage.getItem("teacherAuth") === "true";
-        
         if (!isTeacherAuth) {
             const enteredTeacherPass = prompt("Enter Teacher Password to access Admin Panel:");
-            
-            if (enteredTeacherPass === "RaniaAdmin2026") {
-                sessionStorage.setItem("teacherAuth", "true");
-            } else {
-                alert("❌ Incorrect Teacher Password. Returning to student view.");
+            if (enteredTeacherPass === "RaniaAdmin2026") sessionStorage.setItem("teacherAuth", "true");
+            else {
+                alert("❌ Incorrect Teacher Password.");
                 const url = new URL(window.location.href);
                 url.searchParams.delete('teacher');
                 window.location.replace(url.toString());
@@ -208,62 +259,22 @@ async function loadLessonData() {
 
         if (document.getElementById("teacherAdminBar")) {
             document.getElementById("teacherAdminBar").style.display = "block";
-            if (document.getElementById("adminCurrentLessonName")) {
-                document.getElementById("adminCurrentLessonName").textContent = finalHeadingText;
-            }
-            
-            // --- NEW: Load saved data from Firestore into the input boxes ---
-            try {
-                const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
-                const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
-                const docSnap = await getDoc(docRef);
+            if (document.getElementById("adminCurrentLessonName")) document.getElementById("adminCurrentLessonName").textContent = finalHeadingText;
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.sessionVideo && document.getElementById('sessionUrlInput')) {
-                        document.getElementById('sessionUrlInput').value = data.sessionVideo;
-                    }
-                    if (data.homeworkVideo && document.getElementById('homeworkUrlInput')) {
-                        document.getElementById('homeworkUrlInput').value = data.homeworkVideo;
-                    }
-                }
-            } catch (error) {
-                console.error("Error loading teacher data:", error);
-            }
+            const sessionContainer = document.getElementById("sessionInputsContainer");
+            sessionContainer.innerHTML = "";
+            if (activeSessionVideos.length === 0) addInput('session');
+            else activeSessionVideos.forEach(url => addInput('session', url));
+
+            const homeworkContainer = document.getElementById("homeworkInputsContainer");
+            homeworkContainer.innerHTML = "";
+            if (activeHomeworkVideos.length === 0) addInput('homework');
+            else activeHomeworkVideos.forEach(url => addInput('homework', url));
         }
     }
 
-    // --- NEW: Load video URLs from Firestore for everyone ---
-    let activeVideo = gradeData.videoUrl || "";
-    let activeHomework = gradeData.homeworkVideoUrl || "";
-
-    try {
-        const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
-        const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            if (data.sessionVideo) activeVideo = data.sessionVideo;
-            if (data.homeworkVideo) activeHomework = data.homeworkVideo;
-        }
-    } catch (error) {
-        console.error("Error loading video data:", error);
-    }
-
-    function loadVideoIntoIframe(url, iframeId) {
-        const iframe = document.getElementById(iframeId);
-        if (!iframe) return;
-
-        if (url && url.includes("youtube.com/embed")) {
-            iframe.src = url;
-        } else {
-            iframe.src = "";
-        }
-    }
-
-    loadVideoIntoIframe(activeVideo, "lessonVideoIframe");
-    loadVideoIntoIframe(activeHomework, "homeworkVideoIframe");
+    renderParts(activeSessionVideos, 'sessionPartsContainer', 'lessonVideoIframe');
+    renderParts(activeHomeworkVideos, 'homeworkPartsContainer', 'homeworkVideoIframe');
 
     const indexContainer = document.getElementById("textbookIndexContainer");
     if (indexContainer) {
@@ -276,10 +287,7 @@ async function loadLessonData() {
                 for (let j = 0; j < unit.lessons.length; j++) {
                     lessonListHTML += "<li><span class='bullet-dot'>▪</span> " + unit.lessons[j] + "</li>";
                 }
-                indexHTML += '<div class="index-unit-box">' +
-                             '<div class="unit-title-banner">' + unit.name + '</div>' +
-                             '<ul class="index-lesson-list">' + lessonListHTML + '</ul>' +
-                             '</div>';
+                indexHTML += '<div class="index-unit-box"><div class="unit-title-banner">' + unit.name + '</div><ul class="index-lesson-list">' + lessonListHTML + '</ul></div>';
             }
             const indexGrid = document.getElementById("indexGrid");
             if (indexGrid) { indexGrid.innerHTML = indexHTML; }
@@ -289,8 +297,30 @@ async function loadLessonData() {
     }
 }
 
+function addInput(type, value = "") {
+    const container = document.getElementById(`${type}InputsContainer`);
+    const div = document.createElement('div');
+    div.className = 'input-group dynamic-input-group';
+    
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = `${type}UrlInput`;
+    input.placeholder = "https://www.youtube.com/watch?v=...";
+    input.value = value;
+    
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.innerHTML = '✕';
+    removeBtn.className = 'remove-part-btn';
+    removeBtn.onclick = () => div.remove();
+
+    div.appendChild(input);
+    div.appendChild(removeBtn);
+    container.appendChild(div);
+}
+
 // ==========================================================================
-// 4. Save Logic (Processes YouTube Links and saves to Firestore)
+// 4. Save Logic
 // ==========================================================================
 async function saveTeacherLinks() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -298,115 +328,79 @@ async function saveTeacherLinks() {
     const clickedLessonName = urlParams.get('lessonName');
     const gradeData = mathDatabase[selectedGrade];
     
-    if (!gradeData) {
-        alert("⚠️ Error: Grade data not found. Please make sure the URL has ?grade=X");
-        return;
-    }
+    if (!gradeData) return alert("⚠️ Error: Grade data not found.");
 
     const finalHeadingText = clickedLessonName ? clickedLessonName : gradeData.lessonTitle;
 
-    const sessionInputEl = document.getElementById('sessionUrlInput');
-    const homeworkInputEl = document.getElementById('homeworkUrlInput');
+    const sessionInputs = document.querySelectorAll('.sessionUrlInput');
+    let sessionVideos = [];
+    sessionInputs.forEach(input => {
+        const clean = cleanYoutubeUrl(input.value.trim());
+        if (clean) sessionVideos.push(clean);
+    });
 
-    let inputSession = sessionInputEl ? sessionInputEl.value.trim() : "";
-    let inputHomework = homeworkInputEl ? homeworkInputEl.value.trim() : "";
+    const homeworkInputs = document.querySelectorAll('.homeworkUrlInput');
+    let homeworkVideos = [];
+    homeworkInputs.forEach(input => {
+        const clean = cleanYoutubeUrl(input.value.trim());
+        if (clean) homeworkVideos.push(clean);
+    });
 
-    function cleanYoutubeUrl(url) {
-        if (!url) return "";
-        
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const match = url.match(regExp);
-        
-        if (match && match[2].length === 11) {
-            return `https://www.youtube.com/embed/${match[2]}?rel=0&modestbranding=1`;
-        }
-        
-        const rawIdCheck = url.replace(/[^a-zA-Z0-9_-]/g, "");
-        if (rawIdCheck.length === 11) {
-            return `https://www.youtube.com/embed/${rawIdCheck}?rel=0&modestbranding=1`;
-        }
-        
-        return url;
-    }
+    let dataObj = { sessionVideos: sessionVideos, homeworkVideos: homeworkVideos };
 
-    let dataObj = { sessionVideo: "", homeworkVideo: "" };
-
-    if (inputSession) {
-        dataObj.sessionVideo = cleanYoutubeUrl(inputSession);
-    }
-    if (inputHomework) {
-        dataObj.homeworkVideo = cleanYoutubeUrl(inputHomework);
-    }
-
-    // --- NEW: Save data to Firestore ---
     try {
         const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
         const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
-        
         await setDoc(docRef, dataObj, { merge: true });
-
         alert("🚀 Links saved to the cloud! Refreshing portal view...");
         window.location.reload();
     } catch (error) {
         console.error("Error saving to Firestore:", error);
-        alert("❌ Failed to save links to the cloud. Please check your internet connection and try again.");
+        alert("❌ Failed to save links. Please check your internet connection.");
     }
 }
 
 function toggleTeacherMode(status) {
     const url = new URL(window.location.href);
-    if (status) {
-        url.searchParams.set('teacher', 'true');
-    } else {
-        url.searchParams.delete('teacher');
-        sessionStorage.removeItem('teacherAuth'); 
-    }
+    if (status) url.searchParams.set('teacher', 'true');
+    else { url.searchParams.delete('teacher'); sessionStorage.removeItem('teacherAuth'); }
     window.location.replace(url.toString());
 }
 
 // ==========================================================================
-// 5. Cache Buster Utility (Deletes videos from Firestore)
+// 5. Cache Buster Utility
 // ==========================================================================
 async function clearLessonCache() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedGrade = urlParams.get('grade');
     const clickedLessonName = urlParams.get('lessonName');
     const gradeData = mathDatabase[selectedGrade];
-    
-    if (!gradeData) {
-        alert("⚠️ Error: Grade data not found.");
-        return;
-    }
+    if (!gradeData) return alert("⚠️ Error: Grade data not found.");
 
-    const confirmDelete = confirm("Are you sure you want to REMOVE these video links? This will delete them for all students.");
-    if (!confirmDelete) return;
+    if (!confirm("Are you sure you want to REMOVE all video links? This will delete them for all students.")) return;
 
     const finalHeadingText = clickedLessonName ? clickedLessonName : gradeData.lessonTitle;
     
     try {
         const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
         const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
-        
-        // Overwrite the data with empty strings to delete the videos
-        await setDoc(docRef, { sessionVideo: "", homeworkVideo: "" }, { merge: true });
-
-        alert("🗑️ Video links removed from the cloud successfully!");
+        await setDoc(docRef, { sessionVideos: [], homeworkVideos: [] }, { merge: true });
+        alert("🗑️ Video links removed successfully!");
         window.location.reload();
     } catch (error) {
         console.error("Error deleting from Firestore:", error);
-        alert("❌ Failed to delete links. Please check your internet connection.");
+        alert("❌ Failed to delete links.");
     }
 }
 
 // ==========================================================================
-// 6. Password Gate Logic (With Browser Password Saving)
+// 6. Password Gate Logic
 // ==========================================================================
 const MASTER_PASSWORD = "~!}_~t2@G:vJ?1?"; 
 
 document.addEventListener("DOMContentLoaded", () => {
     const gate = document.getElementById("passwordGate");
     const passwordInput = document.getElementById("passwordInput");
-    const errorMsg = document.getElementById("passwordError");
 
     if (!gate) return;
 
@@ -424,26 +418,20 @@ function checkPassword() {
     const passwordInput = document.getElementById("passwordInput");
     const errorMsg = document.getElementById("passwordError");
 
-    const enteredPassword = passwordInput.value;
-
-    if (enteredPassword === MASTER_PASSWORD) {
+    if (passwordInput.value === MASTER_PASSWORD) {
         sessionStorage.setItem("mathPortalAuth", "true");
-        
         gate.style.display = "none";
         document.body.classList.remove("locked");
     } else {
         errorMsg.style.display = "block";
         passwordInput.value = "";
         passwordInput.style.borderColor = "#ef4444";
-        
-        setTimeout(() => {
-            passwordInput.style.borderColor = "var(--border-color)";
-        }, 2000);
+        setTimeout(() => passwordInput.style.borderColor = "var(--border-color)", 2000);
     }
 }
 
 // ==========================================================================
-// 7. Disable Right-Click on Videos (Anti-Download Friction)
+// 7. Anti-Download & Logout
 // ==========================================================================
 document.addEventListener("contextmenu", function(e) {
     if (e.target.tagName === 'IFRAME') {
@@ -452,9 +440,6 @@ document.addEventListener("contextmenu", function(e) {
     }
 });
 
-// ==========================================================================
-// 8. Logout Student (Clears the saved password)
-// ==========================================================================
 function logoutStudent() {
     if (confirm("Are you sure you want to log out?")) {
         sessionStorage.removeItem("mathPortalAuth");

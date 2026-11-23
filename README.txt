@@ -16,8 +16,7 @@ They must enter the CLASS PASSWORD to get in.
 
 Once they type it, the browser will ask if they want to save it. 
 If they click "Save", the browser will remember them next time. 
-If they are on a shared computer, they can click the "Logout" button 
-in the top corner to lock the site again.
+If they are on a shared computer, they can click the "Logout" button in the top corner.
 
 ------------------------------------------------------
 2. HOW YOU (MRS. RANIA) ADD VIDEOS
@@ -35,9 +34,15 @@ STEP 3: Press Enter. A popup will appear asking for the TEACHER PASSWORD.
 
 STEP 4: Once you enter the password, the Teacher Control Panel will appear.
 STEP 5: Upload your video to YouTube (as Unlisted), copy the link, 
-        and paste it into the box for the Session Video or Homework Video.
+        and paste it into the box.
+        
+        **NEW FEATURE:** If your lesson is too long for one video, 
+        click the blue "+ Add Another Part" button. You can paste 
+        Part 1, Part 2, Part 3, etc.
+        
 STEP 6: Click the blue "Save and Publish Links" button. 
-        The video will instantly appear on the page for the students!
+        The videos will instantly appear on the page for the students 
+        as clickable buttons!
 
 ------------------------------------------------------
 3. IMPORTANT YOUTUBE RULES (PLEASE READ)
@@ -48,12 +53,14 @@ hosted on YouTube. For them to play on your website, you MUST do two things:
 1. Set the video visibility on YouTube to "UNLISTED". 
    (Do NOT set it to Private, or it will break on the website).
 
+2. Make sure "Allow Embedding" is checked in the YouTube video settings. 
+   (Go to YouTube Studio -> Video Details -> Show More -> Check "Allow Embedding").
+
 ------------------------------------------------------
 4. HOW TO EXIT TEACHER MODE
 ------------------------------------------------------
 When you are done adding videos, look at the Teacher Control Panel 
-and click the red "Exit Teacher Mode" button. This will hide the 
-panel so students cannot see it.
+and click the red "Exit Teacher Mode" button.
 
 ------------------------------------------------------
 5. SECURITY FEATURES BUILT INTO THE WEBSITE

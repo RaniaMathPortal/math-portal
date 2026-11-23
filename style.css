@@ -1,15 +1,15 @@
 /* ==========================================================================
-   Design System & Dark Theme Variables for Dashboard
+   Design System Variables for Dashboard
    ========================================================================== */
 :root {
-    --bg-main: #0b0f19;         /* Rich, ultra-dark space background */
-    --bg-card: #151d30;         /* Contrasting deep navy card background */
-    --bg-card-hover: #1e2942;   /* Brightened tone for interactive state */
-    --text-primary: #f8fafc;    /* Soft clean white for high legibility */
-    --text-secondary: #94a3b8;  /* Muted slate text for descriptions */
-    --accent-primary: #3b82f6;  /* Vivid structural math blue */
+    --bg-main: #0b0f19;
+    --bg-card: #151d30;
+    --bg-card-hover: #1e2942;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-primary: #3b82f6;
     --accent-glow: rgba(59, 130, 246, 0.25);
-    --border-color: #243352;    /* Distinct structural borders */
+    --border-color: #243352;
 }
 
 * {
@@ -30,18 +30,16 @@ body {
     padding: 2.5rem 1.5rem;
 }
 
-/* ==========================================================================
-   Structural Wrapper
-   ========================================================================== */
+body.locked {
+    overflow: hidden;
+}
+
 .dashboard-container {
     width: 100%;
     max-width: 1200px;
     text-align: center;
 }
 
-/* ==========================================================================
-   Typography Header
-   ========================================================================== */
 header {
     margin-bottom: 4rem;
 }
@@ -63,9 +61,6 @@ header p {
     font-weight: 400;
 }
 
-/* ==========================================================================
-   Flexible Grid Layout
-   ========================================================================== */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -73,9 +68,6 @@ header p {
     width: 100%;
 }
 
-/* ==========================================================================
-   Math Grade Card Components
-   ========================================================================== */
 .grade-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -90,7 +82,6 @@ header p {
     overflow: hidden;
 }
 
-/* Performance Hover Mechanics */
 .grade-card:hover {
     transform: translateY(-8px);
     background-color: var(--bg-card-hover);
@@ -98,7 +89,6 @@ header p {
     box-shadow: 0 20px 40px -15px var(--accent-glow);
 }
 
-/* Geometric Icon Presentation Box */
 .card-icon {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
     color: var(--accent-primary);
@@ -115,7 +105,6 @@ header p {
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Smooth rotational bounce dynamic */
 .grade-card:hover .card-icon {
     transform: scale(1.15) rotate(8deg);
     background: linear-gradient(135deg, var(--accent-primary) 0%, #2563eb 100%);
@@ -135,25 +124,8 @@ header p {
     line-height: 1.5;
 }
 
-/* ==========================================================================
-   Viewport Queries (Fluidity Tuning)
-   ========================================================================== */
 @media (max-width: 640px) {
-    header h1 {
-        font-size: 2.25rem;
-    }
-    
-    body {
-        padding: 1.5rem 1rem;
-    }
-    
-    .grid-container {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-}
-
-/* Prevent scrolling when the password gate is active */
-body.locked {
-    overflow: hidden;
+    header h1 { font-size: 2.25rem; }
+    body { padding: 1.5rem 1rem; }
+    .grid-container { grid-template-columns: 1fr; gap: 1.5rem; }
 }
