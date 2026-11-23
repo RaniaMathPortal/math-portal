@@ -9,34 +9,149 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .admin-container { max-width: 900px; margin: 4rem auto; padding: 0 1.5rem; }
+        /* Override the centered body layout from style.css */
+        body {
+            justify-content: flex-start;
+            padding-top: 6rem; /* Space for the fixed navbar */
+        }
+
+        /* Fixed Navbar for Admin */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .admin-container { 
+            width: 100%;
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 0 1.5rem; 
+        }
+
         .admin-header { text-align: center; margin-bottom: 2rem; }
-        .admin-card { background: var(--bg-card); padding: 2.5rem; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
         
-        .input-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
-        .input-row input, .input-row select { flex: 1; padding: 1rem; background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; outline: none; }
-        .input-row input:focus, .input-row select:focus { border-color: var(--accent-primary); }
+        .admin-card { 
+            background: var(--bg-card); 
+            padding: 2.5rem; 
+            border-radius: 20px; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); 
+        }
         
-        .generate-btn { width: 100%; padding: 1rem; background: var(--accent-primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 1rem; transition: 0.2s; margin-bottom: 2rem; }
-        .generate-btn:hover { background: #2563eb; }
+        .input-row { 
+            display: flex; 
+            gap: 1rem; 
+            margin-bottom: 1.5rem; 
+        }
         
-        .student-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .student-table th, .student-table td { padding: 1rem; border-bottom: 1px solid var(--border-color); color: white; vertical-align: middle; }
-        .student-table th { color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .input-row input, .input-row select { 
+            flex: 1; 
+            padding: 1rem; 
+            background: #0b0f19; 
+            border: 1px solid var(--border-color); 
+            border-radius: 10px; 
+            color: white; 
+            font-family: inherit; 
+            font-size: 1rem; 
+            outline: none; 
+        }
         
-        .code-badge { background: rgba(59, 130, 246, 0.15); color: var(--accent-primary); padding: 0.4rem 0.8rem; border-radius: 8px; font-family: monospace; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; display: inline-block; }
+        .input-row input:focus, .input-row select:focus { 
+            border-color: var(--accent-primary); 
+        }
         
-        .action-btn { padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-family: inherit; font-weight: 500; font-size: 0.85rem; transition: 0.2s; margin-right: 0.5rem; border: 1px solid transparent; }
+        .generate-btn { 
+            width: 100%; 
+            padding: 1rem; 
+            background: var(--accent-primary); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            transition: 0.2s; 
+            margin-bottom: 2rem; 
+        }
+        
+        .generate-btn:hover { 
+            background: #2563eb; 
+        }
+        
+        .student-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            text-align: left; 
+        }
+        
+        .student-table th, .student-table td { 
+            padding: 1rem; 
+            border-bottom: 1px solid var(--border-color); 
+            color: white; 
+            vertical-align: middle; 
+        }
+        
+        .student-table th { 
+            color: var(--text-secondary); 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+        
+        .code-badge { 
+            background: rgba(59, 130, 246, 0.15); 
+            color: var(--accent-primary); 
+            padding: 0.5rem 0.8rem; 
+            border-radius: 8px; 
+            font-family: monospace; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            letter-spacing: 1px; 
+            display: inline-block; 
+            white-space: nowrap;
+        }
+        
+        /* Action Buttons Layout */
+        .action-cell {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+        }
+
+        .action-btn { 
+            padding: 0.5rem 0.8rem; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-family: inherit; 
+            font-weight: 500; 
+            font-size: 0.8rem; 
+            transition: 0.2s; 
+            border: 1px solid transparent; 
+            white-space: nowrap;
+        }
+        
         .copy-btn { background: transparent; border-color: var(--accent-primary); color: var(--accent-primary); }
         .copy-btn:hover { background: rgba(59, 130, 246, 0.1); }
+        
         .reset-btn { background: transparent; border-color: #f59e0b; color: #f59e0b; }
         .reset-btn:hover { background: rgba(245, 158, 11, 0.1); }
+        
         .delete-btn { background: transparent; border-color: #ef4444; color: #ef4444; }
         .delete-btn:hover { background: rgba(239, 68, 68, 0.1); }
 
         @media (max-width: 768px) {
             .input-row { flex-direction: column; }
             .student-table { display: block; overflow-x: auto; white-space: nowrap; }
+            .action-cell { flex-direction: column; }
         }
     </style>
 </head>
@@ -59,13 +174,13 @@
 
     <nav class="navbar" style="display: none;" id="adminNavbar">
         <a href="index.html" class="back-btn">← Back to Portal</a>
-        <div class="nav-title">Teacher Admin Panel</div>
-        <button onclick="logoutAdmin()" class="logout-btn">Logout</button>
+        <div class="nav-title" style="color: white;">Teacher Admin Panel</div>
+        <button onclick="logoutAdmin()" class="logout-btn" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; transition: 0.2s;">Logout</button>
     </nav>
 
     <div class="admin-container" id="adminContent" style="display: none;">
         <header class="admin-header">
-            <h1 style="color: white; font-size: 2.2rem;">Student Management</h1>
+            <h1 style="color: white; font-size: 2.2rem; margin-bottom: 0.5rem;">Student Management</h1>
             <p style="color: var(--text-secondary);">Generate codes, reset devices, or revoke access.</p>
         </header>
 
@@ -144,7 +259,6 @@
             loadStudents();
         }
 
-        // Check if already logged in
         if (sessionStorage.getItem("adminAuth") === "true") {
             showAdminPanel();
         }
@@ -236,9 +350,11 @@
                         <td>Grade ${student.grade}</td>
                         <td><span class="code-badge">${student.code}</span></td>
                         <td>
-                            <button class="action-btn copy-btn" onclick="copyCode('${student.code}')">Copy</button>
-                            <button class="action-btn reset-btn" onclick="resetDevice('${student.code}')">Reset Device</button>
-                            <button class="action-btn delete-btn" onclick="deleteStudent('${student.code}')">Revoke</button>
+                            <div class="action-cell">
+                                <button class="action-btn copy-btn" onclick="copyCode('${student.code}')">Copy</button>
+                                <button class="action-btn reset-btn" onclick="resetDevice('${student.code}')">Reset Device</button>
+                                <button class="action-btn delete-btn" onclick="deleteStudent('${student.code}')">Revoke</button>
+                            </div>
                         </td>
                     `;
                     tbody.appendChild(tr);
