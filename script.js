@@ -4,8 +4,6 @@
 const mathDatabase = {
     5: {
         gradeTitle: "Grade 5 Mathematics",
-        sessionNumber: "Session #01",
-        sessionDate: "October 5, 2026",
         lessonTitle: "Place Value up to Thousandths",
         unitInfo: "Unit 1 • Decimals",
         videoUrl: "", 
@@ -21,8 +19,6 @@ const mathDatabase = {
     },
     6: {
         gradeTitle: "Grade 6 Mathematics",
-        sessionNumber: "Session #01",
-        sessionDate: "October 5, 2026",
         lessonTitle: "Divisibility Rules & Long Division",
         unitInfo: "Unit 1 • Number System",
         videoUrl: "", 
@@ -39,8 +35,6 @@ const mathDatabase = {
     },
     7: {
         gradeTitle: "Grade 7 Mathematics (Prep 1)",
-        sessionNumber: "Session #01",
-        sessionDate: "October 5, 2026",
         lessonTitle: "Repeated Multiplication",
         unitInfo: "Unit 1 • Algebra",
         videoUrl: "",
@@ -53,8 +47,6 @@ const mathDatabase = {
     },
     8: {
         gradeTitle: "Grade 8 Mathematics (Prep 2)",
-        sessionNumber: "Session #01",
-        sessionDate: "October 6, 2026",
         lessonTitle: "Real Numbers & Their Operations",
         unitInfo: "Unit 1 • Real Numbers",
         videoUrl: "", 
@@ -68,8 +60,6 @@ const mathDatabase = {
     },
     9: {
         gradeTitle: "Grade 9 Mathematics (Prep 3)",
-        sessionNumber: "Session #01",
-        sessionDate: "October 5, 2026",
         lessonTitle: "Solving Linear Equations",
         unitInfo: "Unit 1 • Algebra",
         videoUrl: "",
@@ -84,59 +74,21 @@ const mathDatabase = {
     },
     10: {
         gradeTitle: "Grade 10 Mathematics (Sec 1)",
-        sessionNumber: "Session #01",
-        sessionDate: "October 5, 2026",
         lessonTitle: "Solving Quadratic Equations in One Variable",
         unitInfo: "Unit 1 • Algebra, Relations, and Functions",
         videoUrl: "",
         hasIndex: true,
         units: [
-            { 
-                name: "Unit 1: Algebra, Relations, and Functions", 
-                lessons: [
-                    "Lesson 1: Solving Quadratic Equations in One Variable (Graphically and Algebraically).",
-                    "Lesson 2: Introduction to Complex Numbers.",
-                    "Lesson 3: Determining the Types of Roots of a Quadratic Equation.",
-                    "Lesson 4: The Relation Between the Roots of the Second-Degree Equation and the Coefficients of its Terms.",
-                    "Lesson 5: Forming the Quadratic Equation Whose Two Roots are Known.",
-                    "Lesson 6: Sign of a Function (Constant, Linear, and Quadratic).",
-                    "Lesson 7: Quadratic Inequalities in One Variable."
-                ] 
-            },
-            { 
-                name: "Unit 2: Geometry: Similarity", 
-                lessons: [
-                    "Lesson 1: Similarity of Polygons.",
-                    "Lesson 2: Similarity of Triangles.",
-                    "Lesson 3: The Relation Between the Areas of Two Similar Polygons.",
-                    "Lesson 4: Applications of Similarity in the Circle."
-                ] 
-            },
-            { 
-                name: "Unit 3: Geometry: Triangle Proportionality Theorems", 
-                lessons: [
-                    "Lesson 1: Parallel Lines and Proportional Parts (Thales' Theorem).",
-                    "Lesson 2: Two Angle Bisectors and Proportional Parts.",
-                    "Lesson 3: Applications of Proportionality in the Circle (Power of a Point)."
-                ] 
-            },
-            { 
-                name: "Unit 4: Trigonometry", 
-                lessons: [
-                    "Lesson 1: Directed Angle.",
-                    "Lesson 2: Systems of Measuring Angles (Degree and Radian Measure).",
-                    "Lesson 3: Trigonometric Functions.",
-                    "Lesson 4: Related Angles.",
-                    "Lesson 5: Graphing Trigonometric Functions.",
-                    "Lesson 6: Finding the Measure of an Angle Given the Value of One of its Trigonometric Ratios."
-                ] 
-            }
+            { name: "Unit 1: Algebra, Relations, and Functions", lessons: ["Lesson 1: Solving Quadratic Equations in One Variable", "Lesson 2: Introduction to Complex Numbers", "Lesson 3: Determining the Types of Roots", "Lesson 4: Relation Between Roots & Coefficients", "Lesson 5: Forming the Quadratic Equation", "Lesson 6: Sign of a Function", "Lesson 7: Quadratic Inequalities"] },
+            { name: "Unit 2: Geometry: Similarity", lessons: ["Lesson 1: Similarity of Polygons", "Lesson 2: Similarity of Triangles", "Lesson 3: Areas of Similar Polygons", "Lesson 4: Applications of Similarity in the Circle"] },
+            { name: "Unit 3: Triangle Proportionality Theorems", lessons: ["Lesson 1: Thales' Theorem", "Lesson 2: Angle Bisectors", "Lesson 3: Power of a Point"] },
+            { name: "Unit 4: Trigonometry", lessons: ["Lesson 1: Directed Angle", "Lesson 2: Measuring Angles", "Lesson 3: Trigonometric Functions", "Lesson 4: Related Angles", "Lesson 5: Graphing Trigonometric Functions", "Lesson 6: Finding Angle Measures"] }
         ]
     }
 };
 
 // ==========================================================================
-// 2. Custom Notification & Confirm Systems
+// 2. Custom Notification System
 // ==========================================================================
 function showToast(message, type = 'success') {
     let container = document.getElementById('toastContainer');
@@ -146,60 +98,128 @@ function showToast(message, type = 'success') {
         container.className = 'toast-container';
         document.body.appendChild(container);
     }
-    
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = `<span style="font-size:1.2rem;">${type === 'success' ? '✅' : '⚠️'}</span> <span>${message}</span>`;
     container.appendChild(toast);
-    
     setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3500);
-}
-
-function showConfirm(message) {
-    return new Promise((resolve) => {
-        const overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;backdrop-filter:blur(3px);';
-        
-        const box = document.createElement('div');
-        box.style.cssText = 'background:var(--bg-card);padding:2rem;border-radius:16px;border:1px solid var(--border-color);max-width:400px;width:90%;text-align:center;transform:scale(0.9);transition:transform 0.2s;box-shadow:0 20px 40px rgba(0,0,0,0.5);';
-        
-        box.innerHTML = `
-            <h3 style="color:white;margin-bottom:1rem;font-size:1.1rem;line-height:1.5;">${message}</h3>
-            <div style="display:flex;gap:1rem;margin-top:1.5rem;">
-                <button id="confirmCancel" style="flex:1;padding:0.8rem;background:transparent;border:1px solid var(--border-color);color:white;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:600;">Cancel</button>
-                <button id="confirmOk" style="flex:1;padding:0.8rem;background:#ef4444;border:none;color:white;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:600;">Confirm</button>
-            </div>
-        `;
-        
-        overlay.appendChild(box);
-        document.body.appendChild(overlay);
-        
-        setTimeout(() => { overlay.style.opacity = '1'; box.style.transform = 'scale(1)'; }, 10);
-        
-        const close = (val) => {
-            overlay.style.opacity = '0';
-            box.style.transform = 'scale(0.9)';
-            setTimeout(() => { overlay.remove(); resolve(val); }, 200);
-        };
-        
-        document.getElementById('confirmCancel').onclick = () => close(false);
-        document.getElementById('confirmOk').onclick = () => close(true);
-    });
+    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
 }
 
 // ==========================================================================
-// 3. Dashboard Router Logic
+// 3. Arabic Name Normalization
 // ==========================================================================
-function selectGrade(gradeNumber) {
-    window.location.href = `sessions-archive.html?grade=${gradeNumber}`;
+function normalizeArabicName(name) {
+    if (!name) return "";
+    return name.trim()
+        .replace(/\s+/g, ' ') // Remove extra spaces
+        .replace(/[أإآ]/g, 'ا') // Normalize Alef
+        .replace(/ة/g, 'ه')     // Normalize Taa Marbuta
+        .replace(/ى/g, 'ي')     // Normalize Yaa
+        .toLowerCase();
 }
 
 // ==========================================================================
-// 4. Dynamic Page Builder Logic
+// 4. Login & Device Lock Logic
+// ==========================================================================
+window.checkStudentLogin = async function() {
+    const nameInput = document.getElementById('studentNameInput').value;
+    const codeInput = document.getElementById('accessCodeInput').value.trim().toUpperCase();
+    const errorMsg = document.getElementById('passwordError');
+
+    if (!nameInput || !codeInput) {
+        errorMsg.style.display = 'block';
+        return;
+    }
+
+    const cleanEnteredName = normalizeArabicName(nameInput);
+
+    try {
+        const { doc, getDoc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+        const studentRef = doc(window.db, "students", codeInput);
+        const studentSnap = await getDoc(studentRef);
+
+        if (!studentSnap.exists()) {
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        const studentData = studentSnap.data();
+        const cleanDbName = normalizeArabicName(studentData.name);
+
+        // Check Name Match
+        if (cleanEnteredName !== cleanDbName) {
+            errorMsg.innerHTML = "❌ Access Denied: This code does not belong to this name.";
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        // Device Lock Logic
+        let currentDeviceId = localStorage.getItem('deviceId');
+        if (!currentDeviceId) {
+            currentDeviceId = 'device_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('deviceId', currentDeviceId);
+        }
+
+        if (studentData.deviceId && studentData.deviceId !== currentDeviceId) {
+            errorMsg.innerHTML = "❌ Access Denied: This account is locked to another device. Contact Mrs. Rania.";
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        // If deviceId is null (new/reset), save this device to Firebase
+        if (!studentData.deviceId) {
+            await updateDoc(studentRef, { deviceId: currentDeviceId });
+        }
+
+        // Success! Save Session
+        sessionStorage.setItem("mathPortalAuth", "true");
+        sessionStorage.setItem("studentName", studentData.name);
+        sessionStorage.setItem("studentGrade", studentData.grade);
+
+        // Smart Redirect
+        const currentPage = window.location.pathname;
+        if (currentPage.includes('index.html') || currentPage === '/' || currentPage.endsWith('/math-portal/')) {
+            window.location.href = `sessions-archive.html?grade=${studentData.grade}`;
+        } else {
+            document.getElementById('passwordGate').style.display = 'none';
+            document.body.classList.remove('locked');
+        }
+
+    } catch (error) {
+        console.error("Login error:", error);
+        errorMsg.innerHTML = "An error occurred. Please try again.";
+        errorMsg.style.display = 'block';
+    }
+};
+
+// ==========================================================================
+// 5. Page Load Authentication Check
+// ==========================================================================
+document.addEventListener("DOMContentLoaded", () => {
+    const gate = document.getElementById("passwordGate");
+    if (!gate) return;
+
+    if (sessionStorage.getItem("mathPortalAuth") === "true") {
+        gate.style.display = "none";
+        document.body.classList.remove("locked");
+    } else {
+        document.body.classList.add("locked");
+    }
+});
+
+window.logoutStudent = function() {
+    if (confirm("Are you sure you want to log out?")) {
+        sessionStorage.removeItem("mathPortalAuth");
+        sessionStorage.removeItem("studentName");
+        sessionStorage.removeItem("studentGrade");
+        sessionStorage.removeItem("teacherAuth");
+        window.location.reload();
+    }
+};
+
+// ==========================================================================
+// 6. Teacher Panel Logic (Keep existing)
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("lessonPageTitle")) {
@@ -253,6 +273,13 @@ async function loadLessonData() {
     const clickedUnitName = urlParams.get('unitName');
     const isTeacher = urlParams.get('teacher') === 'true';
 
+    // Grade Lock Check
+    const studentGrade = sessionStorage.getItem("studentGrade");
+    if (!isTeacher && studentGrade && studentGrade !== selectedGrade) {
+        window.location.href = `sessions-archive.html?grade=${studentGrade}`;
+        return;
+    }
+
     const gradeData = mathDatabase[selectedGrade];
     if (!gradeData) {
         document.body.innerHTML = "<h2 style='color:white; text-align:center; font-family:sans-serif; margin-top:20%;'>Grade portal path not found. <a href='index.html' style='color:#3b82f6;'>Return to Dashboard</a></h2>";
@@ -267,7 +294,6 @@ async function loadLessonData() {
     if (document.getElementById("lessonPageTitle")) document.getElementById("lessonPageTitle").textContent = finalHeadingText;
     if (document.getElementById("gradeMeta")) document.getElementById("gradeMeta").textContent = `${gradeData.gradeTitle} • ${finalUnitText}`;
 
-    // Mark as seen in localStorage to clear the NEW badge
     if (!isTeacher) {
         localStorage.setItem(`seen_${selectedGrade}_${finalHeadingText}`, new Date().toISOString());
     }
@@ -368,9 +394,6 @@ function addInput(type, value = "") {
     container.appendChild(div);
 }
 
-// ==========================================================================
-// 5. Save Logic (Adds lastUpdated timestamp for NEW badge)
-// ==========================================================================
 async function saveTeacherLinks() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedGrade = urlParams.get('grade');
@@ -398,7 +421,7 @@ async function saveTeacherLinks() {
     let dataObj = { 
         sessionVideos: sessionVideos, 
         homeworkVideos: homeworkVideos,
-        lastUpdated: new Date().toISOString() // This triggers the NEW badge for students
+        lastUpdated: new Date().toISOString() 
     };
 
     try {
@@ -421,9 +444,6 @@ function toggleTeacherMode(status) {
     window.location.replace(url.toString());
 }
 
-// ==========================================================================
-// 6. Cache Buster Utility
-// ==========================================================================
 async function clearLessonCache() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedGrade = urlParams.get('grade');
@@ -431,8 +451,7 @@ async function clearLessonCache() {
     const gradeData = mathDatabase[selectedGrade];
     if (!gradeData) return showToast("Error: Grade data not found.", "error");
 
-    const confirmDelete = await showConfirm("Are you sure you want to REMOVE all video links for this lesson? This will delete them for all students.");
-    if (!confirmDelete) return;
+    if (!confirm("Are you sure you want to REMOVE all video links for this lesson? This will delete them for all students.")) return;
 
     const finalHeadingText = clickedLessonName ? clickedLessonName : gradeData.lessonTitle;
     
@@ -449,58 +468,9 @@ async function clearLessonCache() {
     }
 }
 
-// ==========================================================================
-// 7. Password Gate Logic
-// ==========================================================================
-const MASTER_PASSWORD = "~!}_~t2@G:vJ?1?"; 
-
-document.addEventListener("DOMContentLoaded", () => {
-    const gate = document.getElementById("passwordGate");
-    const passwordInput = document.getElementById("passwordInput");
-
-    if (!gate) return;
-
-    if (sessionStorage.getItem("mathPortalAuth") === "true") {
-        gate.style.display = "none";
-        document.body.classList.remove("locked");
-    } else {
-        document.body.classList.add("locked");
-        if (passwordInput) passwordInput.focus();
-    }
-});
-
-function checkPassword() {
-    const gate = document.getElementById("passwordGate");
-    const passwordInput = document.getElementById("passwordInput");
-    const errorMsg = document.getElementById("passwordError");
-
-    if (passwordInput.value === MASTER_PASSWORD) {
-        sessionStorage.setItem("mathPortalAuth", "true");
-        gate.style.display = "none";
-        document.body.classList.remove("locked");
-    } else {
-        errorMsg.style.display = "block";
-        passwordInput.value = "";
-        passwordInput.style.borderColor = "#ef4444";
-        setTimeout(() => passwordInput.style.borderColor = "var(--border-color)", 2000);
-    }
-}
-
-// ==========================================================================
-// 8. Anti-Download & Logout
-// ==========================================================================
 document.addEventListener("contextmenu", function(e) {
     if (e.target.tagName === 'IFRAME') {
         e.preventDefault();
         showToast("Downloading videos is disabled.", "error");
     }
 });
-
-async function logoutStudent() {
-    const confirmLogout = await showConfirm("Are you sure you want to log out of the portal?");
-    if (confirmLogout) {
-        sessionStorage.removeItem("mathPortalAuth");
-        sessionStorage.removeItem("teacherAuth");
-        window.location.reload();
-    }
-}

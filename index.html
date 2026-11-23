@@ -11,20 +11,21 @@
 </head>
 <body>
 
-    <!-- PASSWORD GATE OVERLAY -->
+    <!-- LOGIN GATE OVERLAY -->
     <div id="passwordGate" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center;">
         <div style="background: var(--bg-card); padding: 3rem 2rem; border-radius: 20px; border: 1px solid var(--border-color); max-width: 400px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
             <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
-            <h2 style="color: white; margin-bottom: 0.5rem;">Private Portal</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">Enter the class password to access the lessons.</p>
+            <h2 style="color: white; margin-bottom: 0.5rem;">Student Login</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">Enter your full name and access code.</p>
             
-            <form id="loginForm" onsubmit="event.preventDefault(); checkPassword();">
-                <input type="text" id="usernameInput" name="username" value="student" style="display: none;" autocomplete="username">
-                <input type="password" id="passwordInput" name="password" placeholder="Enter password" autocomplete="current-password" style="width: 100%; padding: 1rem; background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; margin-bottom: 1rem; text-align: center;">
+            <form id="loginForm" onsubmit="event.preventDefault(); checkStudentLogin();">
+                <input type="text" id="studentNameInput" placeholder="Full Name (e.g., أحمد يوسف)" style="width: 100%; padding: 1rem; background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; margin-bottom: 1rem; text-align: center;">
+                <input type="text" id="accessCodeInput" placeholder="Access Code (e.g., RANIA-G8-145)" style="width: 100%; padding: 1rem; background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; margin-bottom: 1rem; text-align: center;">
                 <button type="submit" style="width: 100%; padding: 1rem; background: var(--accent-primary); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">Unlock Portal</button>
             </form>
             
-            <p id="passwordError" style="color: #ef4444; margin-top: 1rem; font-size: 0.85rem; display: none;">Incorrect password. Try again.</p>
+            <p style="color: #f59e0b; margin-top: 1rem; font-size: 0.75rem;">⚠️ Do not use Incognito/Private mode.</p>
+            <p id="passwordError" style="color: #ef4444; margin-top: 0.5rem; font-size: 0.85rem; display: none;">Invalid Name or Code. Please check and try again.</p>
         </div>
     </div>
 
