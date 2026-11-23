@@ -93,9 +93,28 @@
         <main class="grid-container" id="archiveGridContainer"></main>
     </div>
 
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAE6tzeY9dmC1l30z05SBJ7KgN5k_ZwRIqs",
+            authDomain: "rania-math-portal.firebaseapp.com",
+            projectId: "rania-math-portal",
+            storageBucket: "rania-math-portal.firebasestorage.app",
+            messagingSenderId: "469116190094",
+            appId: "1:469116190094:web:4d8d31c9db5eb2c02db8df"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        window.db = getFirestore(app); 
+    </script>
+
     <script src="script.js"></script>
+    
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const selectedGrade = urlParams.get('grade');
             const gradeData = mathDatabase[selectedGrade];
@@ -110,14 +129,37 @@
             const gridContainer = document.getElementById("archiveGridContainer");
             let archiveHTML = "";
 
+            // Import Firestore dynamically
+            const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+
             if (gradeData.hasIndex && gradeData.units) {
-                gradeData.units.forEach((unit, unitIdx) => {
+                for (let unitIdx = 0; unitIdx < gradeData.units.length; unitIdx++) {
+                    const unit = gradeData.units[unitIdx];
                     let lessonsListHTML = "";
-                    unit.lessons.forEach((lesson) => {
+                    
+                    for (let lesson of unit.lessons) {
                         const encodedLesson = encodeURIComponent(lesson);
                         const encodedUnitName = encodeURIComponent(unit.name);
-                        lessonsListHTML += `<li><a href="lessons.html?grade=${selectedGrade}&lessonName=${encodedLesson}&unitName=${encodedUnitName}"><span style="color: var(--accent-primary);">▪</span> ${lesson}</a></li>`;
-                    });
+                        
+                        // Check if there is a new video in Firebase
+                        let isNew = false;
+                        try {
+                            const docRef = doc(window.db, "lessons", `${selectedGrade}_${lesson.replace(/\s+/g, '_')}`);
+                            const docSnap = await getDoc(docRef);
+                            if (docSnap.exists()) {
+                                const data = docSnap.data();
+                                if (data.lastUpdated) {
+                                    const lastSeen = localStorage.getItem(`seen_${selectedGrade}_${lesson}`);
+                                    if (!lastSeen || new Date(data.lastUpdated) > new Date(lastSeen)) {
+                                        isNew = true;
+                                    }
+                                }
+                            }
+                        } catch (err) { console.log("Error fetching lesson status:", err); }
+
+                        const badgeHTML = isNew ? `<span class="new-badge"></span>` : "";
+                        lessonsListHTML += `<li><a href="lessons.html?grade=${selectedGrade}&lessonName=${encodedLesson}&unitName=${encodedUnitName}"><span style="color: var(--accent-primary);">▪</span> ${lesson} ${badgeHTML}</a></li>`;
+                    }
 
                     archiveHTML += `
                         <div class="grade-card" style="cursor: default; align-items: flex-start; padding: 2.5rem 2rem;">
@@ -127,19 +169,6 @@
                                 ${unit.name.replace(/Unit \d+:\s*/, '')}
                             </p>
                             <ul class="archive-lesson-links">${lessonsListHTML}</ul>
-                        </div>`;
-                });
-            } else {
-                for (let i = 1; i <= 2; i++) {
-                    archiveHTML += `
-                        <div class="grade-card" style="align-items: flex-start; padding: 2.5rem 2rem;">
-                            <div class="card-icon">U${i}</div>
-                            <h2 style="margin-bottom: 0.5rem; text-align: left;">Unit ${i}: Core Mathematics</h2>
-                            <p style="color: #a1a1aa; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; width: 100%; text-align: left;">General Topics Profile</p>
-                            <ul class="archive-lesson-links">
-                                <li><a href="lessons.html?grade=${selectedGrade}&lessonName=Active%20Lecture"><span style="color: var(--accent-primary);">▪</span> Session #01 - Active Lecture</a></li>
-                                <li><a href="lessons.html?grade=${selectedGrade}&lessonName=Revision%20Lab"><span style="color: var(--accent-primary);">▪</span> Session #02 - Revision Lab</a></li>
-                            </ul>
                         </div>`;
                 }
             }

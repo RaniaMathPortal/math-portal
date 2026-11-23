@@ -9,8 +9,6 @@ const mathDatabase = {
         lessonTitle: "Place Value up to Thousandths",
         unitInfo: "Unit 1 • Decimals",
         videoUrl: "", 
-        fileName: "Grade5_Unit1_Worksheet.pdf",
-        downloadUrl: "#",
         hasIndex: true,
         units: [
             { name: "Unit 1: Decimals to the Thousandths", lessons: ["L1–3: Place Value, Fractions as Decimals & Decomposing", "L4 & 5: Comparing and Rounding Decimals", "L6–10: Estimating, Adding & Subtracting Decimals"] },
@@ -28,8 +26,6 @@ const mathDatabase = {
         lessonTitle: "Divisibility Rules & Long Division",
         unitInfo: "Unit 1 • Number System",
         videoUrl: "", 
-        fileName: "Grade6_Unit1_Worksheet.pdf",
-        downloadUrl: "#",
         hasIndex: true,
         units: [
             { name: "Unit 1: Number System & Divisibility", lessons: ["L1: Divisibility Rules and Long Division Algorithm", "L2: Prime Factorization, G.C.F. & L.C.M. via Venn Diagrams", "L3: Modeling and Solving Fraction Addition/Subtraction"] },
@@ -48,8 +44,6 @@ const mathDatabase = {
         lessonTitle: "Repeated Multiplication",
         unitInfo: "Unit 1 • Algebra",
         videoUrl: "",
-        fileName: "Grade7_Unit1_Worksheet.pdf",
-        downloadUrl: "#",
         hasIndex: true,
         units: [
             { name: "Unit 1: Algebra (Powers & Equations)", lessons: ["L1: Repeated Multiplication (Intro to Powers)", "L2: Non-negative integer exponents", "L3: Negative integer exponents", "L4: Scientific/Standard form of rational numbers", "L5: Square root of a non-negative rational number", "L6: Solving first-degree equations in Q", "L7: Solving first-degree inequalities in Q"] },
@@ -64,8 +58,6 @@ const mathDatabase = {
         lessonTitle: "Real Numbers & Their Operations",
         unitInfo: "Unit 1 • Real Numbers",
         videoUrl: "", 
-        fileName: "Grade8_Unit1_Worksheet.pdf",
-        downloadUrl: "#",
         hasIndex: true,
         units: [
             { name: "Unit 1: Real Numbers", lessons: ["L1: Real numbers", "L2: Intervals and their operations", "L3: Operations on real numbers", "L4: Laws of square and cube roots", "L5: Laws of exponents in real numbers"] },
@@ -81,8 +73,6 @@ const mathDatabase = {
         lessonTitle: "Solving Linear Equations",
         unitInfo: "Unit 1 • Algebra",
         videoUrl: "",
-        fileName: "Grade9_Unit1_Worksheet.pdf",
-        downloadUrl: "#",
         hasIndex: true,
         units: [
             { name: "Unit 1: Algebra (Equations)", lessons: ["L1: Solving two linear equations in two variables", "L2: Solving a second-degree equation via General Formula", "L3: Solving two equations (One 1st-degree, one 2nd-degree)"] },
@@ -99,8 +89,6 @@ const mathDatabase = {
         lessonTitle: "Solving Quadratic Equations in One Variable",
         unitInfo: "Unit 1 • Algebra, Relations, and Functions",
         videoUrl: "",
-        fileName: "Grade10_Unit1_Worksheet.pdf",
-        downloadUrl: "#",
         hasIndex: true,
         units: [
             { 
@@ -148,14 +136,70 @@ const mathDatabase = {
 };
 
 // ==========================================================================
-// 2. Dashboard Router Logic
+// 2. Custom Notification & Confirm Systems
+// ==========================================================================
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<span style="font-size:1.2rem;">${type === 'success' ? '✅' : '⚠️'}</span> <span>${message}</span>`;
+    container.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+}
+
+function showConfirm(message) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;backdrop-filter:blur(3px);';
+        
+        const box = document.createElement('div');
+        box.style.cssText = 'background:var(--bg-card);padding:2rem;border-radius:16px;border:1px solid var(--border-color);max-width:400px;width:90%;text-align:center;transform:scale(0.9);transition:transform 0.2s;box-shadow:0 20px 40px rgba(0,0,0,0.5);';
+        
+        box.innerHTML = `
+            <h3 style="color:white;margin-bottom:1rem;font-size:1.1rem;line-height:1.5;">${message}</h3>
+            <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                <button id="confirmCancel" style="flex:1;padding:0.8rem;background:transparent;border:1px solid var(--border-color);color:white;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:600;">Cancel</button>
+                <button id="confirmOk" style="flex:1;padding:0.8rem;background:#ef4444;border:none;color:white;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:600;">Confirm</button>
+            </div>
+        `;
+        
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        
+        setTimeout(() => { overlay.style.opacity = '1'; box.style.transform = 'scale(1)'; }, 10);
+        
+        const close = (val) => {
+            overlay.style.opacity = '0';
+            box.style.transform = 'scale(0.9)';
+            setTimeout(() => { overlay.remove(); resolve(val); }, 200);
+        };
+        
+        document.getElementById('confirmCancel').onclick = () => close(false);
+        document.getElementById('confirmOk').onclick = () => close(true);
+    });
+}
+
+// ==========================================================================
+// 3. Dashboard Router Logic
 // ==========================================================================
 function selectGrade(gradeNumber) {
     window.location.href = `sessions-archive.html?grade=${gradeNumber}`;
 }
 
 // ==========================================================================
-// 3. Dynamic Page Builder Logic
+// 4. Dynamic Page Builder Logic
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("lessonPageTitle")) {
@@ -223,6 +267,11 @@ async function loadLessonData() {
     if (document.getElementById("lessonPageTitle")) document.getElementById("lessonPageTitle").textContent = finalHeadingText;
     if (document.getElementById("gradeMeta")) document.getElementById("gradeMeta").textContent = `${gradeData.gradeTitle} • ${finalUnitText}`;
 
+    // Mark as seen in localStorage to clear the NEW badge
+    if (!isTeacher) {
+        localStorage.setItem(`seen_${selectedGrade}_${finalHeadingText}`, new Date().toISOString());
+    }
+
     let activeSessionVideos = [];
     let activeHomeworkVideos = [];
 
@@ -249,7 +298,7 @@ async function loadLessonData() {
             const enteredTeacherPass = prompt("Enter Teacher Password to access Admin Panel:");
             if (enteredTeacherPass === "RaniaAdmin2026") sessionStorage.setItem("teacherAuth", "true");
             else {
-                alert("❌ Incorrect Teacher Password.");
+                showToast("Incorrect Teacher Password.", "error");
                 const url = new URL(window.location.href);
                 url.searchParams.delete('teacher');
                 window.location.replace(url.toString());
@@ -320,7 +369,7 @@ function addInput(type, value = "") {
 }
 
 // ==========================================================================
-// 4. Save Logic
+// 5. Save Logic (Adds lastUpdated timestamp for NEW badge)
 // ==========================================================================
 async function saveTeacherLinks() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -328,7 +377,7 @@ async function saveTeacherLinks() {
     const clickedLessonName = urlParams.get('lessonName');
     const gradeData = mathDatabase[selectedGrade];
     
-    if (!gradeData) return alert("⚠️ Error: Grade data not found.");
+    if (!gradeData) return showToast("Error: Grade data not found.", "error");
 
     const finalHeadingText = clickedLessonName ? clickedLessonName : gradeData.lessonTitle;
 
@@ -346,17 +395,22 @@ async function saveTeacherLinks() {
         if (clean) homeworkVideos.push(clean);
     });
 
-    let dataObj = { sessionVideos: sessionVideos, homeworkVideos: homeworkVideos };
+    let dataObj = { 
+        sessionVideos: sessionVideos, 
+        homeworkVideos: homeworkVideos,
+        lastUpdated: new Date().toISOString() // This triggers the NEW badge for students
+    };
 
     try {
         const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
         const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
         await setDoc(docRef, dataObj, { merge: true });
-        alert("🚀 Links saved to the cloud! Refreshing portal view...");
-        window.location.reload();
+        
+        showToast("Links saved to the cloud! Refreshing...", "success");
+        setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
         console.error("Error saving to Firestore:", error);
-        alert("❌ Failed to save links. Please check your internet connection.");
+        showToast("Failed to save links. Check your connection.", "error");
     }
 }
 
@@ -368,33 +422,35 @@ function toggleTeacherMode(status) {
 }
 
 // ==========================================================================
-// 5. Cache Buster Utility
+// 6. Cache Buster Utility
 // ==========================================================================
 async function clearLessonCache() {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedGrade = urlParams.get('grade');
     const clickedLessonName = urlParams.get('lessonName');
     const gradeData = mathDatabase[selectedGrade];
-    if (!gradeData) return alert("⚠️ Error: Grade data not found.");
+    if (!gradeData) return showToast("Error: Grade data not found.", "error");
 
-    if (!confirm("Are you sure you want to REMOVE all video links? This will delete them for all students.")) return;
+    const confirmDelete = await showConfirm("Are you sure you want to REMOVE all video links for this lesson? This will delete them for all students.");
+    if (!confirmDelete) return;
 
     const finalHeadingText = clickedLessonName ? clickedLessonName : gradeData.lessonTitle;
     
     try {
         const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
         const docRef = doc(window.db, "lessons", `${selectedGrade}_${finalHeadingText.replace(/\s+/g, '_')}`);
-        await setDoc(docRef, { sessionVideos: [], homeworkVideos: [] }, { merge: true });
-        alert("🗑️ Video links removed successfully!");
-        window.location.reload();
+        await setDoc(docRef, { sessionVideos: [], homeworkVideos: [], lastUpdated: null }, { merge: true });
+        
+        showToast("Video links removed successfully!", "success");
+        setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
         console.error("Error deleting from Firestore:", error);
-        alert("❌ Failed to delete links.");
+        showToast("Failed to delete links.", "error");
     }
 }
 
 // ==========================================================================
-// 6. Password Gate Logic
+// 7. Password Gate Logic
 // ==========================================================================
 const MASTER_PASSWORD = "~!}_~t2@G:vJ?1?"; 
 
@@ -431,17 +487,18 @@ function checkPassword() {
 }
 
 // ==========================================================================
-// 7. Anti-Download & Logout
+// 8. Anti-Download & Logout
 // ==========================================================================
 document.addEventListener("contextmenu", function(e) {
     if (e.target.tagName === 'IFRAME') {
         e.preventDefault();
-        alert("⚠️ Downloading or copying videos is disabled for this portal.");
+        showToast("Downloading videos is disabled.", "error");
     }
 });
 
-function logoutStudent() {
-    if (confirm("Are you sure you want to log out?")) {
+async function logoutStudent() {
+    const confirmLogout = await showConfirm("Are you sure you want to log out of the portal?");
+    if (confirmLogout) {
         sessionStorage.removeItem("mathPortalAuth");
         sessionStorage.removeItem("teacherAuth");
         window.location.reload();

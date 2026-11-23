@@ -72,6 +72,24 @@
         </main>
     </div>
 
+    <!-- Firebase SDK Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAE6tzeY9dmC1l30z05SBJ7KgN5k_ZwRIqs",
+            authDomain: "rania-math-portal.firebaseapp.com",
+            projectId: "rania-math-portal",
+            storageBucket: "rania-math-portal.firebasestorage.app",
+            messagingSenderId: "469116190094",
+            appId: "1:469116190094:web:4d8d31c9db5eb2c02db8df"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        window.db = getFirestore(app); 
+    </script>
+
     <script src="script.js"></script>
 </body>
 </html>

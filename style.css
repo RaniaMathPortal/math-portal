@@ -124,6 +124,56 @@ header p {
     line-height: 1.5;
 }
 
+/* ==========================================================================
+   NOTIFICATION BADGE & TOAST SYSTEM
+   ========================================================================== */
+.new-badge {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    margin-left: 8px;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: var(--bg-card);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent-primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transform: translateX(120%);
+    transition: transform 0.3s ease-out;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast.show { transform: translateX(0); }
+.toast.success { border-left-color: #10b981; }
+.toast.error { border-left-color: #ef4444; }
+
 @media (max-width: 640px) {
     header h1 { font-size: 2.25rem; }
     body { padding: 1.5rem 1rem; }
